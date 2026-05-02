@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coin & Currency Identifier</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold: #C9A84C;
+      --gold-light: #E8C97A;
+      --gold-dark: #8B6914;
+      --bg: #0F0D0A;
+      --surface: #1C1813;
+      --surface2: #251F17;
+      --surface3: #2F2820;
+      --border: #3A3020;
+      --text: #F0E8D8;
+      --text-muted: #9A8E78;
+      --green: #4CAF72;
+      --red: #E05555;
+      --blue: #5B9BD5;
+      --radius: 12px;
+    }
+
+    body {
+      font-family: 'Georgia', serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo {
+      width: 48px;
+      height: 48px;
+      background: radial-gradient(circle at 35% 35%, var(--gold-light), var(--gold-dark));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 2px 12px rgba(201,168,76,0.4);
+      flex-shrink: 0;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      color: var(--gold-light);
+      letter-spacing: 0.5px;
+    }
+
+    header p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+      font-style: italic;
+    }
+
+    main {
+      flex: 1;
+      max-width: 960px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 32px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    /* Upload zone */
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      padding: 48px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative;
+    }
+
+    .upload-zone:hover,
+    .upload-zone.drag-over {
+      border-color: var(--gold);
+      background: var(--surface2);
+    }
+
+    .upload-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    .upload-icon {
+      font-size: 3rem;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 0 8px rgba(201,168,76,0.5));
+    }
+
+    .upload-zone h2 {
+      font-size: 1.2rem;
+      color: var(--gold-light);
+      margin-bottom: 8px;
+    }
+
+    .upload-zone p {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    /* Preview */
+    #preview-section {
+      display: none;
+    }
+
+    .preview-container {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    #preview-img {
+      width: 140px;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .preview-info {
+      flex: 1;
+    }
+
+    .preview-info h3 {
+      color: var(--gold-light);
+      margin-bottom: 6px;
+      font-size: 1rem;
+    }
+
+    .preview-info p {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-bottom: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      font-family: inherit;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+
+    .btn:active { transform: scale(0.97); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      color: #1a1200;
+      font-weight: bold;
+    }
+
+    .btn-secondary {
+      background: var(--surface3);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+
+    .btn-primary:hover:not(:disabled) { opacity: 0.9; }
+    .btn-secondary:hover:not(:disabled) { color: var(--text); border-color: var(--gold); }
+
+    /* Loading */
+    #loading-section {
+      display: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 40px;
+      text-align: center;
+    }
+
+    .spinner {
+      width: 52px;
+      height: 52px;
+      border: 4px solid var(--surface3);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #loading-section h3 {
+      color: var(--gold-light);
+      margin-bottom: 6px;
+    }
+
+    #loading-section p {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-style: italic;
+    }
+
+    /* Results */
+    #results-section {
+      display: none;
+    }
+
+    .results-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .results-header h2 {
+      color: var(--gold-light);
+      font-size: 1.3rem;
+    }
+
+    .confidence-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-family: monospace;
+    }
+
+    .conf-high { background: rgba(76,175,114,0.15); color: var(--green); border: 1px solid rgba(76,175,114,0.3); }
+    .conf-medium { background: rgba(201,168,76,0.15); color: var(--gold-light); border: 1px solid rgba(201,168,76,0.3); }
+    .conf-low { background: rgba(224,85,85,0.15); color: var(--red); border: 1px solid rgba(224,85,85,0.3); }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 620px) {
+      .results-grid { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .card-wide {
+      grid-column: 1 / -1;
+    }
+
+    .card h3 {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--gold);
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(58,48,32,0.5);
+      gap: 12px;
+    }
+
+    .detail-row:last-child { border-bottom: none; }
+
+    .detail-label {
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      flex-shrink: 0;
+    }
+
+    .detail-value {
+      color: var(--text);
+      font-size: 0.9rem;
+      text-align: right;
+    }
+
+    /* Grade display */
+    .grade-display {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .grade-badge {
+      background: linear-gradient(135deg, var(--surface2), var(--surface3));
+      border: 2px solid var(--gold);
+      border-radius: 8px;
+      padding: 8px 16px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .grade-badge .grade-code {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: var(--gold-light);
+      font-family: monospace;
+      line-height: 1;
+    }
+
+    .grade-badge .grade-name {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    .grade-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+      font-style: italic;
+    }
+
+    /* Value display */
+    .value-display {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .value-box {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .value-box .v-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .value-box .v-amount {
+      font-size: 1.2rem;
+      font-weight: bold;
+      font-family: monospace;
+    }
+
+    .v-low .v-amount { color: #d97706; }
+    .v-mid .v-amount { color: var(--gold-light); }
+    .v-high .v-amount { color: var(--green); }
+
+    .value-basis {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* Features list */
+    .features-list {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .features-list li {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 0.82rem;
+      color: var(--blue);
+    }
+
+    /* Notes */
+    .notes-text {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      font-style: italic;
+      background: var(--surface2);
+      border-left: 3px solid var(--gold);
+      padding: 10px 14px;
+      border-radius: 0 6px 6px 0;
+    }
+
+    /* Error */
+    #error-section {
+      display: none;
+      background: rgba(224,85,85,0.08);
+      border: 1px solid rgba(224,85,85,0.3);
+      border-radius: var(--radius);
+      padding: 24px;
+      text-align: center;
+    }
+
+    #error-section .error-icon { font-size: 2.5rem; margin-bottom: 10px; }
+    #error-section h3 { color: var(--red); margin-bottom: 6px; }
+    #error-section p { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 16px; }
+
+    /* Not identified */
+    .not-identified {
+      text-align: center;
+      padding: 40px;
+    }
+
+    .not-identified .ni-icon { font-size: 3rem; margin-bottom: 12px; }
+    .not-identified h3 { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 8px; }
+    .not-identified p { color: var(--text-muted); font-size: 0.85rem; }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">🪙</div>
+  <div>
+    <h1>Coin &amp; Currency Identifier</h1>
+    <p>AI-powered numismatic appraisal — photo to value in seconds</p>
+  </div>
+</header>
+
+<main>
+
+  <!-- Upload -->
+  <div class="upload-zone" id="upload-zone">
+    <input type="file" id="file-input" accept="image/*" />
+    <div class="upload-icon">📷</div>
+    <h2>Drop your photo here</h2>
+    <p>Supports JPEG, PNG, WebP &bull; Best results with clear, well-lit images<br>
+    Photograph both sides for more accurate identification</p>
+  </div>
+
+  <!-- Preview -->
+  <div id="preview-section">
+    <div class="preview-container">
+      <img id="preview-img" src="" alt="Preview" />
+      <div class="preview-info">
+        <h3>Ready to analyze</h3>
+        <p id="file-name-display">image.jpg</p>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn btn-primary" id="analyze-btn">
+            🔍 Identify &amp; Value
+          </button>
+          <button class="btn btn-secondary" id="clear-btn">✕ Clear</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div id="loading-section">
+    <div class="spinner"></div>
+    <h3>Analyzing your coin…</h3>
+    <p>Consulting numismatic databases and grading standards</p>
+  </div>
+
+  <!-- Error -->
+  <div id="error-section">
+    <div class="error-icon">⚠️</div>
+    <h3>Analysis failed</h3>
+    <p id="error-msg">An error occurred. Please try again.</p>
+    <button class="btn btn-secondary" id="error-retry-btn">Try again</button>
+  </div>
+
+  <!-- Results -->
+  <div id="results-section">
+    <div class="results-header">
+      <h2 id="result-name">—</h2>
+      <span class="confidence-badge" id="confidence-badge">—</span>
+    </div>
+
+    <div id="results-body"></div>
+  </div>
+
+</main>
+
+<footer>
+  Values are estimates based on current market data. For high-value coins, always seek professional certification (PCGS, NGC).
+</footer>
+
+<script>
+  const fileInput = document.getElementById('file-input');
+  const uploadZone = document.getElementById('upload-zone');
+  const previewSection = document.getElementById('preview-section');
+  const previewImg = document.getElementById('preview-img');
+  const fileNameDisplay = document.getElementById('file-name-display');
+  const analyzeBtn = document.getElementById('analyze-btn');
+  const clearBtn = document.getElementById('clear-btn');
+  const loadingSection = document.getElementById('loading-section');
+  const errorSection = document.getElementById('error-section');
+  const errorMsg = document.getElementById('error-msg');
+  const errorRetryBtn = document.getElementById('error-retry-btn');
+  const resultsSection = document.getElementById('results-section');
+  const resultName = document.getElementById('result-name');
+  const confidenceBadge = document.getElementById('confidence-badge');
+  const resultsBody = document.getElementById('results-body');
+
+  let currentFile = null;
+
+  function show(el) { el.style.display = ''; }
+  function hide(el) { el.style.display = 'none'; }
+  function showBlock(el) { el.style.display = 'block'; }
+
+  function resetUI() {
+    hide(previewSection);
+    hide(loadingSection);
+    hide(errorSection);
+    hide(resultsSection);
+    show(uploadZone);
+  }
+
+  function setFile(file) {
+    if (!file || !file.type.startsWith('image/')) return;
+    currentFile = file;
+    const url = URL.createObjectURL(file);
+    previewImg.src = url;
+    fileNameDisplay.textContent = `${file.name}  (${(file.size / 1024).toFixed(0)} KB)`;
+    hide(uploadZone);
+    hide(loadingSection);
+    hide(errorSection);
+    hide(resultsSection);
+    show(previewSection);
+  }
+
+  fileInput.addEventListener('change', e => { if (e.target.files[0]) setFile(e.target.files[0]); });
+
+  uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+  uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+  uploadZone.addEventListener('drop', e => {
+    e.preventDefault();
+    uploadZone.classList.remove('drag-over');
+    const f = e.dataTransfer.files[0];
+    if (f) setFile(f);
+  });
+
+  clearBtn.addEventListener('click', () => {
+    currentFile = null;
+    fileInput.value = '';
+    resetUI();
+  });
+
+  errorRetryBtn.addEventListener('click', () => {
+    hide(errorSection);
+    show(previewSection);
+  });
+
+  analyzeBtn.addEventListener('click', async () => {
+    if (!currentFile) return;
+    hide(previewSection);
+    hide(errorSection);
+    hide(resultsSection);
+    showBlock(loadingSection);
+
+    const formData = new FormData();
+    formData.append('file', currentFile);
+
+    try {
+      const resp = await fetch('/analyze', { method: 'POST', body: formData });
+      const data = await resp.json();
+      if (!resp.ok) throw new Error(data.detail || 'Server error');
+      hide(loadingSection);
+      renderResults(data);
+    } catch (err) {
+      hide(loadingSection);
+      errorMsg.textContent = err.message || 'Unexpected error. Please try again.';
+      showBlock(errorSection);
+    }
+  });
+
+  function formatCurrency(val, currency = 'USD') {
+    if (!val && val !== 0) return '—';
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currency || 'USD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(val);
+  }
+
+  function renderResults(d) {
+    if (!d.identified) {
+      resultName.textContent = 'Not a recognized coin or currency';
+      confidenceBadge.className = 'confidence-badge conf-low';
+      confidenceBadge.textContent = '⚠ Unidentified';
+      resultsBody.innerHTML = `
+        <div class="not-identified">
+          <div class="ni-icon">🔍</div>
+          <h3>Unable to identify</h3>
+          <p>The image does not appear to show a recognizable coin or currency.<br>
+          Try a clearer photo with good lighting and minimal background clutter.</p>
+        </div>`;
+      show(resultsSection);
+      return;
+    }
+
+    resultName.textContent = d.name || 'Unknown Coin / Currency';
+
+    const conf = (d.confidence || 'medium').toLowerCase();
+    confidenceBadge.className = `confidence-badge conf-${conf}`;
+    const confIcons = { high: '✓ High confidence', medium: '~ Medium confidence', low: '⚠ Low confidence' };
+    confidenceBadge.textContent = confIcons[conf] || conf;
+
+    const grade = d.condition || {};
+    const val = d.value || {};
+    const features = Array.isArray(d.notable_features) ? d.notable_features : [];
+
+    resultsBody.innerHTML = `
+      <div class="results-grid">
+
+        <!-- Identification -->
+        <div class="card">
+          <h3>Identification</h3>
+          ${row('Type', capitalize(d.type || '—'))}
+          ${row('Country', d.country || '—')}
+          ${row('Denomination', d.denomination || '—')}
+          ${row('Year / Date', d.year || '—')}
+          ${row('Composition', d.composition || '—')}
+          ${d.series ? row('Series / Mint', d.series) : ''}
+        </div>
+
+        <!-- Condition -->
+        <div class="card">
+          <h3>Condition &amp; Grade</h3>
+          <div class="grade-display">
+            <div class="grade-badge">
+              <div class="grade-code">${esc(grade.grade || '?')}</div>
+              <div class="grade-name">${esc(grade.label || '')}</div>
+            </div>
+            <div class="grade-desc">${esc(grade.description || 'No description available.')}</div>
+          </div>
+        </div>
+
+        <!-- Value -->
+        <div class="card card-wide">
+          <h3>Estimated Market Value</h3>
+          <div class="value-display">
+            <div class="value-box v-low">
+              <div class="v-label">Low</div>
+              <div class="v-amount">${formatCurrency(val.low, val.currency)}</div>
+            </div>
+            <div class="value-box v-mid">
+              <div class="v-label">Mid</div>
+              <div class="v-amount">${formatCurrency(val.mid, val.currency)}</div>
+            </div>
+            <div class="value-box v-high">
+              <div class="v-label">High</div>
+              <div class="v-amount">${formatCurrency(val.high, val.currency)}</div>
+            </div>
+          </div>
+          ${val.basis ? `<div class="value-basis">📊 ${esc(val.basis)}</div>` : ''}
+        </div>
+
+        ${features.length ? `
+        <!-- Notable Features -->
+        <div class="card card-wide">
+          <h3>Notable Features</h3>
+          <ul class="features-list">
+            ${features.map(f => `<li>${esc(f)}</li>`).join('')}
+          </ul>
+        </div>` : ''}
+
+        ${d.notes ? `
+        <!-- Notes -->
+        <div class="card card-wide">
+          <h3>Appraiser Notes</h3>
+          <div class="notes-text">${esc(d.notes)}</div>
+        </div>` : ''}
+
+      </div>
+    `;
+
+    show(resultsSection);
+  }
+
+  function row(label, value) {
+    return `<div class="detail-row"><span class="detail-label">${label}</span><span class="detail-value">${esc(String(value))}</span></div>`;
+  }
+
+  function esc(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function capitalize(str) {
+    return str.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  }
+</script>
+</body>
+</html>
