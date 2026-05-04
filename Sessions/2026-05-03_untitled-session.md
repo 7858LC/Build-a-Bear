@@ -174,3 +174,63 @@ Once you're in the right vault and can see the `Sessions` folder, open `Sessions
 > [!question]+ User
 > Stop hook feedback:
 > [~/.claude/stop-hook-git-check.sh]: There are untracked files in the repository. Please commit and push these changes to the remote branch.
+
+**Claude:**
+
+The stop hook already exported a new session note. Let me commit and push it.
+
+Done. The stop hook is working correctly — it exported a new session note as soon as the last session ended. The untracked file just needed to be committed.
+
+One thing to note: the git check hook and the Obsidian export hook run together at session end. The git hook will always flag new session notes as untracked until they're committed. That's expected behavior — the notes get written, then you (or I) commit them. If you want the export to also auto-commit and push, I can add that to the stop hook script.
+
+> [!question]+ User
+> don't see Sessions in the Obsidian (left side) Explorer
+
+**Claude:**
+
+Let me check where Obsidian thinks its vault is.
+
+The files definitely exist on the server, but Obsidian is running on **your local machine** — not this server. The vault files need to be on the same device where Obsidian is open.
+
+There are two ways to fix this:
+
+---
+
+**Option A — Clone the repo to your local machine (simplest)**
+
+On your local machine, in a terminal:
+```bash
+git clone https://github.com/7858LC/Build-a-Bear ~/Build-a-Bear
+```
+Then in Obsidian: **Open vault → Open folder as vault** → select the `Build-a-Bear` folder.
+
+The `Sessions/` folder will appear in the explorer immediately.
+
+---
+
+**Option B — Use Obsidian Sync or iCloud/Dropbox**
+
+If you already have an Obsidian vault folder synced via iCloud, Dropbox, or Obsidian Sync, tell me the path and I can write the session notes directly there instead.
+
+---
+
+Which option fits how you work? Once we know where your Obsidian vault lives, I can make sure every new session note lands there automatically.
+
+> [!question]+ User
+> how In Obsidian, I have Build-a-Bear  open. I still can't see anything under it
+
+**Claude:**
+
+The vault is likely pointing to an empty local folder on your machine — the files are on the server but not synced there yet.
+
+**Quick check:** In Obsidian, go to **Settings → About** and look for the **Vault path**. What path does it show?
+
+That will tell us exactly where Obsidian is looking. Once I know the path, I can either:
+- Tell you how to `git clone` the repo into that exact folder, **or**
+- If it's a cloud-synced folder (iCloud, Dropbox, Google Drive), I can change the scripts to write notes there directly from the server
+
+What does the vault path say?
+
+> [!question]+ User
+> Stop hook feedback:
+> [~/.claude/stop-hook-git-check.sh]: There are uncommitted changes in the repository. Please commit and push these changes to the remote branch.
