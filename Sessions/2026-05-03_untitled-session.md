@@ -234,3 +234,47 @@ What does the vault path say?
 > [!question]+ User
 > Stop hook feedback:
 > [~/.claude/stop-hook-git-check.sh]: There are uncommitted changes in the repository. Please commit and push these changes to the remote branch.
+
+**Claude:**
+
+The stop hook already exported our conversation as a session note. Committing it now.
+
+Done. That's the stop hook working as intended — it exported this conversation to a session note automatically.
+
+Now, back to Obsidian: what path does your vault show under **Settings → About**? That's the key to getting the notes visible. Once I know the local path, we can get the files syncing there.
+
+> [!question]+ User
+> I don't see about under setting
+
+**Claude:**
+
+No problem. Try this instead:
+
+**In Obsidian, bottom-left corner** — click the vault icon (looks like a box/safe) or the vault name **"Build-a-Bear"**. That opens the vault switcher, and hovering over or right-clicking the vault name usually shows the folder path.
+
+Alternatively, what device/OS are you using? (Mac, Windows, iPhone, Android?) — I can give you exact steps to find the vault folder path based on your platform.
+
+> [!question]+ User
+> this is what I see
+
+**Claude:**
+
+Now I can see everything. Your Obsidian vault is the big second brain, and `Build-a-Bear` is already a folder inside it at `home → user → Build-a-Bear` — but it's empty because the session notes are being written to the wrong place.
+
+Let me check where the actual vault lives on this server.
+
+The vault on screen isn't on this server — it's on your local machine. But I can see your vault already has a `home/user/Build-a-Bear` folder structure that mirrors this server's path. Let me find where that vault is actually stored.
+
+The vault isn't on this server — it's on your Windows machine. Since your vault already has a `home/user/Build-a-Bear` folder, I just need the root path of your vault so I can point the export scripts there.
+
+**In Obsidian, do this:**
+
+Right-click the **"Build-a-Bear"** folder in the left panel → **"Show in system explorer"** (or "Reveal in Finder").
+
+That will open File Explorer showing you exactly where the vault folder lives on your machine — something like `C:\Users\YourName\Documents\ObsidianVault\home\user\Build-a-Bear`.
+
+What path does it show?
+
+> [!question]+ User
+> Stop hook feedback:
+> [~/.claude/stop-hook-git-check.sh]: There are uncommitted changes in the repository. Please commit and push these changes to the remote branch.
