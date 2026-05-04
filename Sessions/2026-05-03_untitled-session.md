@@ -278,3 +278,64 @@ What path does it show?
 > [!question]+ User
 > Stop hook feedback:
 > [~/.claude/stop-hook-git-check.sh]: There are uncommitted changes in the repository. Please commit and push these changes to the remote branch.
+
+**Claude:**
+
+Done. The stop hook keeps triggering because the export script updates the session note as our conversation grows — that's correct behavior.
+
+Still waiting on the vault path from your Windows machine. Once you right-click **Build-a-Bear** in Obsidian → **Show in system explorer**, paste the path here and I'll wire the exports directly into your vault.
+
+> [!question]+ User
+> C:\Users\lchas\New Things\home\user
+
+**Claude:**
+
+The vault root is `C:\Users\lchas\New Things\` and the `Build-a-Bear` folder is already in the right place. You just need to clone the repo into it on your Windows machine. Open **PowerShell** and run:
+
+```powershell
+cd "C:\Users\lchas\New Things\home\user"
+
+# Remove the empty folder first
+Remove-Item -Recurse -Force "Build-a-Bear"
+
+# Clone the repo
+git clone https://github.com/7858LC/Build-a-Bear Build-a-Bear
+
+# Switch to the branch with all the session notes
+cd Build-a-Bear
+git checkout claude/map-sessions-obsidian-TkoYQ
+```
+
+After that, go back to Obsidian and press **Ctrl+R** to refresh — you'll see the `Sessions` folder appear under `Build-a-Bear` with the notes inside.
+
+**For keeping it up to date:** Whenever new sessions are added on the server, just run this in PowerShell from `C:\Users\lchas\New Things\home\user\Build-a-Bear`:
+```powershell
+git pull
+```
+
+> [!question]+ User
+> nothing under folders
+
+**Claude:**
+
+Let's verify the files are actually there. Open **File Explorer** and navigate to:
+
+```
+C:\Users\lchas\New Things\home\user\Build-a-Bear
+```
+
+Do you see a `Sessions` folder there? If yes, go back to Obsidian and press **Ctrl+R**.
+
+If the folder is empty or missing, the checkout didn't work. In that case, open PowerShell and run:
+
+```powershell
+cd "C:\Users\lchas\New Things\home\user\Build-a-Bear"
+git status
+git branch -a
+```
+
+Paste what it shows and I'll fix it from there.
+
+> [!question]+ User
+> Stop hook feedback:
+> [~/.claude/stop-hook-git-check.sh]: There are uncommitted changes in the repository. Please commit and push these changes to the remote branch.
