@@ -339,3 +339,122 @@ Paste what it shows and I'll fix it from there.
 > [!question]+ User
 > Stop hook feedback:
 > [~/.claude/stop-hook-git-check.sh]: There are uncommitted changes in the repository. Please commit and push these changes to the remote branch.
+
+**Claude:**
+
+Done. Still waiting on what PowerShell shows for `git status` and `git branch -a` inside `C:\Users\lchas\New Things\home\user\Build-a-Bear` — that'll tell us why the Sessions folder isn't appearing.
+
+API Error: 400 {"type":"error","error":{"type":"invalid_request_error","message":"messages.132.content.1.text: cache_control cannot be set for empty text blocks"},"request_id":"req_011CahcaDtKJm2gTaaxD4sJL"}
+
+API Error: 400 {"type":"error","error":{"type":"invalid_request_error","message":"messages.132.content.3.text: cache_control cannot be set for empty text blocks"},"request_id":"req_011Cahcavuszmo3LUMoTb4iA"}
+
+API Error: 400 {"type":"error","error":{"type":"invalid_request_error","message":"messages.132.content.6.text: cache_control cannot be set for empty text blocks"},"request_id":"req_011CahccXhBfGjuGf2ff9yHe"}
+
+> [!question]+ User
+> keeps kicking error when I try to paste
+
+**Claude:**
+
+API Error: 400 {"type":"error","error":{"type":"invalid_request_error","message":"messages: text content blocks must be non-empty"},"request_id":"req_011CahcdxUUTGrMWkSguFZWU"}
+
+> [!question]+ User
+> this
+
+**Claude:**
+
+API Error: 400 {"type":"error","error":{"type":"invalid_request_error","message":"messages: text content blocks must be non-empty"},"request_id":"req_011Cahcf2u9yfDo6LpmuTiJz"}
+
+> [!question]+ User
+> this isn't working
+
+**Claude:**
+
+API Error: 400 {"type":"error","error":{"type":"invalid_request_error","message":"messages: text content blocks must be non-empty"},"request_id":"req_011CahcgQ1goxVanZNLT3wtR"}
+
+API Error: 400 {"type":"error","error":{"type":"invalid_request_error","message":"messages.122.content.13.text: cache_control cannot be set for empty text blocks"},"request_id":"req_011CahcvVJKhZ2uYVp1zPR6Y"}
+
+> [!question]+ User
+> is this conversation corrupt
+
+**Claude:**
+
+API Error: 400 {"type":"error","error":{"type":"invalid_request_error","message":"messages: text content blocks must be non-empty"},"request_id":"req_011CahcwyhQAqQE6QNbfhqdn"}
+
+> [!question]+ User
+> if (!userInput || userInput.trim() === "") {
+>   // Show a UI message or just return early
+>   return;
+> }
+
+**Claude:**
+
+API Error: 400 {"type":"error","error":{"type":"invalid_request_error","message":"messages: text content blocks must be non-empty"},"request_id":"req_011CahdCVHXM5UjDdSnZq52U"}
+
+> [!question]+ User
+> "In the function that calls the Anthropic API, add a guard at the top that returns early if the user input is empty or whitespace"
+
+**Claude:**
+
+API Error: 400 {"type":"error","error":{"type":"invalid_request_error","message":"messages: text content blocks must be non-empty"},"request_id":"req_011CahdQC42DEgTq6PDtfe6i"}
+
+> [!question]+ User
+> "In the function that calls the Anthropic API, add a guard at the top that returns early if the user input is empty or whitespace"
+> if (!userInput || userInput.trim() === "") {
+>   // Show a UI message or just return early
+>   return;
+> }
+
+**Claude:**
+
+API Error: 400 {"type":"error","error":{"type":"invalid_request_error","message":"messages: text content blocks must be non-empty"},"request_id":"req_011CahdSbxFgeYy2zmJJGExP"}
+
+> [!question]+ User
+> stop the session
+
+**Claude:**
+
+API Error: 400 {"type":"error","error":{"type":"invalid_request_error","message":"messages: text content blocks must be non-empty"},"request_id":"req_011CahdTnXmx4aPx1A9mhZVY"}
+
+> [!question]+ User
+> PS C:\Users\lchas\New Things\home\user\Build-a-Bear> git branch -a
+>   claude/coin-currency-identifier-aCtWW
+> * claude/map-sessions-obsidian-TkoYQ
+>   remotes/origin/HEAD -> origin/claude/coin-currency-identifier-aCtWW
+>   remotes/origin/claude/coin-currency-identifier-aCtWW
+>   remotes/origin/claude/map-sessions-obsidian-TkoYQ
+
+**Claude:**
+
+API Error: 400 {"type":"error","error":{"type":"invalid_request_error","message":"messages: text content blocks must be non-empty"},"request_id":"req_011CahdkQqGoprvZEfZA4wiA"}
+
+> [!question]+ User
+> Continue from where you left off.
+
+**Claude:**
+
+No response requested.
+
+> [!question]+ User
+> fix
+
+**Claude:**
+
+The problem is clear: you have a `.obsidian` folder inside `Build-a-Bear` — Obsidian sees it as a nested vault and stops indexing its contents. Removing it will let your main vault see the `Sessions` folder.
+
+Now in PowerShell on your Windows machine, run:
+
+```powershell
+cd "C:\Users\lchas\New Things\home\user\Build-a-Bear"
+git pull
+```
+
+Then in Obsidian press **Ctrl+R** to refresh. You should now see `Sessions` appear under `Build-a-Bear`.
+
+> [!question]+ User
+> Are all of my recent code sessions synched to my Obsidian Valut
+
+**Claude:**
+
+The repo was reset in this new session environment. Let me restore it from the remote and then run a fresh import.
+
+Good, repo is restored. Now run the import to catch any sessions that were missed.
